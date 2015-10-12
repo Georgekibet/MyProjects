@@ -181,6 +181,8 @@ public class MainActivity extends ActionBarActivity implements BaseFragment.OnFa
            /* if (dialog.isShowing()) {
                 dialog.dismiss();
             }*/
+
+            
             if (success) {
                 Toast.makeText(getApplicationContext(), "Export successful!", Toast.LENGTH_SHORT).show();
             } else {
