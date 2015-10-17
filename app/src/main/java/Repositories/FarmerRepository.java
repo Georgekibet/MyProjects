@@ -1,6 +1,7 @@
 package Repositories;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -30,7 +31,9 @@ public class FarmerRepository {
       helper.getDao(Farmer.class).createIfNotExists(farmer);
       helper.close();
   }
-    public List<Farmer> getAllUsers() throws SQLException {
+    public List<Farmer> getAll() throws SQLException {
         return helper.getDao(Farmer.class).queryForAll();
     }
+
+
 }

@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
+
+import DataBase.Farmer;
 
 /**
  * Created by george on 10/11/2015.
@@ -24,9 +27,20 @@ public class CreateCsv {
     }
     public CreateCsv(){}
 
+    public String getFileAddress() {
+        return fileAddress;
+    }
 
-    private void exportTheDB(Cursor cursor) throws IOException
+    public void setFileAddress(String fileAddress) {
+        this.fileAddress = fileAddress;
+    }
+
+    public  String fileAddress="";
+
+
+    public Boolean exportFarmersToCSV(List<Farmer> farmerList) throws IOException
     {
+        Boolean success=true;
         File myFile;
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
@@ -34,37 +48,30 @@ public class CreateCsv {
         extStorageDirectory= Environment.getExternalStorageDirectory().toString();
 
         try {
-
-            myFile = new File(extStorageDirectory+"/Export_"+TimeStampDB+".csv");
+             setFileAddress(extStorageDirectory+"/Export_"+TimeStampDB+".csv");
+            myFile = new File(getFileAddress());
             myFile.createNewFile();
             FileOutputStream fOut = new FileOutputStream(myFile);
             OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
             myOutWriter.append("First Name,Otber names,Id Number,Phone number");
             myOutWriter.append("\n");
 
-            if (cursor!= null) {
-                while (cursor.moveToNext()){
 
-                    String f_name = cursor.getString(0);
-                    String o_names = cursor.getString(1);
-                    String id_number = cursor.getString(2);
-                    String phone_number = cursor.getString(3);
+            for (Farmer farmer:farmerList) {
 
-                    myOutWriter.append(f_name+","+o_names+","+id_number+","+phone_number);
-                    myOutWriter.append("\n");
-                }
-
-                cursor.close();
-                myOutWriter.close();
-                fOut.close();
+                myOutWriter.append(farmer.getFirstNAme()+","+farmer.getOtherNames()+","+farmer.getFarmerCode()+","+farmer.getPhoneNumber());
+                myOutWriter.append("\n");
             }
 
+                  myOutWriter.close();
 
-        } catch (SQLiteException se)
+
+        } catch (Exception e)
         {
-            Log.e(getClass().getSimpleName(), "Could not create or Open the database");
+            success=false;
+            Log.e(getClass().getSimpleName(), "Error creating new csv");
         }
 
-
+return  success;
     }
 }
