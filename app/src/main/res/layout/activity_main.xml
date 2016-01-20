@@ -27,14 +27,14 @@
                     android:id="@+id/toolbar"
                     android:layout_height="80dp"
                     android:background="@color/theme_primary"
-                    style="@style/Widget.MaterialSheetFab.Fab" >
-                    <TextView
+                    style="@style/Widget.MaterialSheetFab.ToolBar" >
+                   <!-- <TextView
 
                         style="@style/TextAppearance.MaterialSheetFab.Sheet.Item"
 
 
 
-                        android:text=" My Data Collectr" />
+                        android:text=" My Data Collectr" />-->
 
                     </android.support.v7.widget.Toolbar>
 

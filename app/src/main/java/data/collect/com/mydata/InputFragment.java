@@ -3,7 +3,6 @@ package data.collect.com.mydata;
 /**
  * Created by george on 10/9/2015.
  */
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -17,9 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-import com.gordonwong.materialsheetfab.MaterialSheetFab;
-import com.gordonwong.materialsheetfab.animations.FabAnimation;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,25 +23,25 @@ import java.util.UUID;
 
 import DataBase.Farmer;
 import Repositories.FarmerRepository;
+import utils.DateConverter;
 import utils.DatePickerFragment;
-import utils.Fab;
 
 public class InputFragment extends BaseFragment  {
 
-String firstname="",othernames="";
+    String firstname="",othernames="";
     int idNumber=0,phoneNumber=0;
     EditText firstNameEd;
     EditText otherNameEd;
     EditText idNumberEd;
     EditText phoneNumberEd;
-
+    Date date;
 
     @Override
 
     public View onCreateView(LayoutInflater inflater ,ViewGroup container, Bundle savedInstanceState) {
 
 
-      View view=inflater.inflate( R.layout.input_layout, container, false);
+        View view=inflater.inflate( data.collect.com.mydata.R.layout.input_layout, container, false);
 
 
         return view;
@@ -56,55 +52,64 @@ String firstname="",othernames="";
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FloatingActionButton fab= (FloatingActionButton) view.findViewById(R.id.fab);
-        firstNameEd=(EditText)view.findViewById(R.id.first_name);
-        otherNameEd=(EditText)view.findViewById(R.id.other_names);
-        idNumberEd=(EditText)view.findViewById(R.id.id_number);
-         phoneNumberEd=(EditText)view.findViewById(R.id.farmer_phone);
+        FloatingActionButton fab= (FloatingActionButton) view.findViewById(data.collect.com.mydata.R.id.fab);
+        firstNameEd=(EditText)view.findViewById(data.collect.com.mydata.R.id.first_name);
+        otherNameEd=(EditText)view.findViewById(data.collect.com.mydata.R.id.other_names);
+        idNumberEd=(EditText)view.findViewById(data.collect.com.mydata.R.id.id_number);
+        phoneNumberEd=(EditText)view.findViewById(data.collect.com.mydata.R.id.farmer_phone);
 
 
 
 
-        Button dateButton=(Button)view.findViewById(R.id.button_date);
+        final Button dateButton=(Button)view.findViewById(data.collect.com.mydata.R.id.button_date);
         dateButton.setOnClickListener(onDatePickerClick());
 
-       fab.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
 
-               if(firstNameEd.getText().length()>2){
-                   firstname=firstNameEd.getText().toString();
-                   othernames=otherNameEd.getText().toString();
-               }
-               else {firstNameEd.setError("Cannot be empty"); return;};
-               if(idNumberEd.getText().length()>2){
-                   idNumber=Integer.parseInt(idNumberEd.getText().toString());
-                   phoneNumber=Integer.parseInt(phoneNumberEd.getText().toString());
-               }
-               else{ idNumberEd.setError("Cannot be empty"); return;};
+                if(firstNameEd.getText().length()>2){
+                    firstname=firstNameEd.getText().toString();
+                    othernames=otherNameEd.getText().toString();
+                }
+                else {firstNameEd.setError("Cannot be empty"); return;};
+                if(idNumberEd.getText().length()>2){
+                    idNumber=Integer.parseInt(idNumberEd.getText().toString());
+                    phoneNumber=Integer.parseInt(phoneNumberEd.getText().toString());
+                }
+                else{ idNumberEd.setError("Cannot be empty"); return;};
 
-               Farmer farmer= new Farmer();
-               farmer.setId(UUID.randomUUID());
-               farmer.setDOB(((MainActivity) getActivity()).getDateString());
-               farmer.setDateCreated(Calendar.getInstance().getTime());
-               farmer.setOtherNames(othernames);
-               farmer.setFirstNAme(firstname);
+                if(!dateButton.getText().toString().trim().startsWith("Y")){
+                    date=new DateConverter().ConvertStrigtodate("yyyy-MM-dd",dateButton.getText().toString());
+                }
+                else{ dateButton.setError("cannot be empty");return;}
+
+                Farmer farmer= new Farmer();
+                farmer.setId(UUID.randomUUID());
+                farmer.setDOB(((MainActivity) getActivity()).getDateString());
+                farmer.setDateCreated(Calendar.getInstance().getTime());
+                farmer.setOtherNames(othernames);
+                farmer.setFirstNAme(firstname);
+                farmer.setPhoneNumber(phoneNumber);
+                farmer.setFarmerCode(idNumber);
+                farmer.setDOB(date);
+
+                try {
+
+                    new FarmerRepository(getActivity()).saveFarmer(farmer);
+
+                }
+                catch (Exception e){}
 
 
- try {
-     new FarmerRepository(getActivity()).saveFarmer(farmer);
- }
-catch (Exception e){}
-
-
-               FragmentManager fm=getFragmentManager();
-               Fragment fragment=new DataListingFragment();
-               FragmentTransaction fragmentTransaction=fm.beginTransaction();
-               fragmentTransaction.replace(R.id.fragment_place, fragment);
-               fragmentTransaction.commit();
-           }
-       });
+                FragmentManager fm=getFragmentManager();
+                Fragment fragment=new DataListingFragment();
+                FragmentTransaction fragmentTransaction=fm.beginTransaction();
+                fragmentTransaction.replace(data.collect.com.mydata.R.id.fragment_place, fragment);
+                fragmentTransaction.commit();
+            }
+        });
 
     }
 

@@ -49,17 +49,17 @@ public class MainActivity extends ActionBarActivity implements BaseFragment.OnFa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(data.collect.com.mydata.R.layout.activity_main);
         setupActionBar();
-        setupDrawer();
+
 
         FragmentManager fm=getFragmentManager();
         Fragment fragment=new DataListingFragment();
         FragmentTransaction fragmentTransaction=fm.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_place, fragment);
+        fragmentTransaction.replace(data.collect.com.mydata.R.id.fragment_place, fragment);
         fragmentTransaction.commit();
 
-        TextView dumpDbTv= (TextView) findViewById(R.id.drawer_dumpdb);
+        TextView dumpDbTv= (TextView) findViewById(data.collect.com.mydata.R.id.drawer_dumpdb);
         dumpDbTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,14 +68,42 @@ public class MainActivity extends ActionBarActivity implements BaseFragment.OnFa
                 new DBBack_Up().execute();
             }
         });
+
+        // setupDrawer();
+        drawerLayout = (DrawerLayout) findViewById(data.collect.com.mydata.R.id.drawer_layout);
+        drawerToggle = new ActionBarDrawerToggle
+                (
+                        this,
+                        drawerLayout,
+                        R.string.notes,
+                        R.string.notes
+                )
+        {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().hide();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                getSupportActionBar().show();
+            }
+        };
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        drawerToggle.syncState();
     }
+
 
    /* */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(data.collect.com.mydata.R.menu.menu_main, menu);
         return true;
     }
 
@@ -85,23 +113,27 @@ public class MainActivity extends ActionBarActivity implements BaseFragment.OnFa
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == data.collect.com.mydata.R.id.action_settings) {
             return true;
         }
-        if (id== android.R.id.home){getDrawerToggleDelegate();}
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+
         return super.onOptionsItemSelected(item);
     }
     private void setupActionBar() {
-        Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar=(Toolbar) findViewById(data.collect.com.mydata.R.id.toolbar);
         //toolbar.setNavigationIcon(R.drawable.ic_list_black_48dp);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-       // getSupportActionBar().setDis
+        // getSupportActionBar().setDis
     }
     private void setupDrawer() {
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.opendrawer,
-                R.string.closedrawer);
+        drawerLayout = (DrawerLayout) findViewById(data.collect.com.mydata.R.id.drawer_layout);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, data.collect.com.mydata.R.string.opendrawer,
+                data.collect.com.mydata.R.string.closedrawer);
         drawerLayout.setDrawerListener(drawerToggle);
     }
 
@@ -127,9 +159,9 @@ public class MainActivity extends ActionBarActivity implements BaseFragment.OnFa
 
     public void setDate(String date){
 
-           Button b= (Button)findViewById(R.id.button_date);
-           this.dateString=date;
-           b.setText(date);
+        Button b= (Button)findViewById(data.collect.com.mydata.R.id.button_date);
+        this.dateString=date;
+        b.setText(date);
     }
     public Date getDateString(){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
@@ -137,7 +169,7 @@ public class MainActivity extends ActionBarActivity implements BaseFragment.OnFa
         Date date=new Date();
         try {
 
-             date = formatter.parse(this.dateString);
+            date = formatter.parse(this.dateString);
             System.out.println(date);
             System.out.println(formatter.format(date));
 
